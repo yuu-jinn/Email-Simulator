@@ -26,9 +26,10 @@ class Email:
         # Create the method to mark an email as spam.
         self.is_spam = True  # Mark the email as spam.
 
-    def delete_email(self, inbox):
+    def delete_email(self, inbox, deleted_emails):
         # Create the method to delete an email from the inbox.
         inbox.remove(self)
+        deleted_emails.append(self)
 
     @classmethod
     def mark_all_as_read(cls, emails):
@@ -39,6 +40,9 @@ class Email:
 # --- Lists --- #
 # Initialise an empty list to store the email objects.
 inbox = []
+
+# New list to store deleted emails
+deleted_emails = []
 
 # --- Functions --- #
 def populate_inbox():
@@ -56,6 +60,11 @@ def list_emails():
         status = '(Unread)' if not email.has_been_read else ''
         spam_status = '(Spam)' if email.is_spam else ''
         print(f"{i}. {email.subject_line} {status} {spam_status}")
+
+def list_deleted_emails():
+    # Create a function to display deleted emails with sender and title
+    for i, email in enumerate(deleted_emails):
+        print(f"{i}. From: {email.email_address}, Subject: {email.subject_line}")
 
 def read_email(index):
     # Create a function that displays a selected email and sets its 'has_been_read' variable to True.
@@ -79,7 +88,7 @@ def read_email(index):
 
         elif action == "2":
             # Delete the email
-            email.delete_email(inbox)
+            email.delete_email(inbox, deleted_emails)
             print(f"\nEmail from {email.email_address} deleted.\n")
 
         else:
@@ -97,7 +106,8 @@ while True:
     user_choice = int(input('''\nWould you like to:
     1. Read an email
     2. View unread emails
-    3. Quit application
+    3. View deleted emails
+    4. Quit application
 
     Enter selection: '''))
 
@@ -118,6 +128,14 @@ while True:
             print("\nNo unread emails.")
 
     elif user_choice == 3:
+        # Logic to view deleted emails
+        if deleted_emails:
+            print("\nDeleted Email Subjects:")
+            list_deleted_emails()
+        else:
+            print("\nNo deleted emails.")
+
+    elif user_choice == 4:
         # Logic to quit application
         print("Quitting application.")
         break
